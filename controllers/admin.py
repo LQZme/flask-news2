@@ -144,13 +144,16 @@ def article_edit(pk):
     if article is None:
         return redirect(url_for('.article_index'))
     form = ArticleForm(obj=article)
-    print(form.content)
     if form.validate_on_submit():
         try:
+            filename = secure_filename(''.join(lazy_pinyin(form.img_url.data.filename)))
+            print(filename)
+            form.img_url.data.save('./static/images/' + filename)
+            print("上传成功！")
             article.title = form.title.data
             article.content = form.content.data
             article.types = form.types.data
-            article.img_url = form.img_url.data
+            article.img_url = filename
             article.author = form.author.data
             article.is_recommend = form.is_recommend.data
             article.is_valid = form.is_valid.data
